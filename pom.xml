@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- TODO: Sett din egen groupID og artifactID -->
-    <groupId>velg.en.fornuftig.groupID</groupId>
+    <groupId>no.ntnu.idatx2003.oblig3.cardgame</groupId>
     <artifactId>CardGame</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -19,4 +19,23 @@
 
     <!-- TODO: Sett riktig versjon av nødvendige plugins -->
 
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>no.ntnu.idatx2003.oblig3.cardgame.MainApp</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
