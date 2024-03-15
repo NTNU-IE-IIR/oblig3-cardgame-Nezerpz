@@ -3,11 +3,11 @@ package no.ntnu.idatx2003.oblig3.cardgame;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +24,14 @@ import javafx.stage.Stage;
 
 public class AppWindow extends Application {
   private final DeckOfCards deck = new DeckOfCards();
+  private List<PlayingCard> cardsOnHand = new ArrayList<>();
+  private TextField textFieldSumOfFaces = new TextField();
+  private TextField textFieldFlush = new TextField();
+    private TextField textFieldHearts = new TextField();
+    private TextField textFieldQueensOfSpades = new TextField();
+
+    private FlowPane flowPaneCardsOnHand = new FlowPane();
+
 
   public void start(Stage stage) {
     // Create a root node as a BorderPane
@@ -95,10 +103,9 @@ public class AppWindow extends Application {
    */
   public HBox hBoxSumOfFaces() {
     Label labelSumOfFaces = new Label("Sum of faces:");
-    TextField textFieldSumOfFaces = new TextField();
-    textFieldSumOfFaces.setEditable(false);
+    this.textFieldSumOfFaces.setEditable(false);
     HBox hBoxSumOfFaces = new HBox();
-    hBoxSumOfFaces.getChildren().addAll(labelSumOfFaces, textFieldSumOfFaces);
+    hBoxSumOfFaces.getChildren().addAll(labelSumOfFaces, this.textFieldSumOfFaces);
     return hBoxSumOfFaces;
   }
 
@@ -108,10 +115,9 @@ public class AppWindow extends Application {
    */
   public HBox hBoxFlush() {
     Label labelFlush = new Label("Flush:");
-    TextField textFieldFlush = new TextField();
-    textFieldFlush.setEditable(false);
+    this.textFieldFlush.setEditable(false);
     HBox hBoxFlush = new HBox();
-    hBoxFlush.getChildren().addAll(labelFlush, textFieldFlush);
+    hBoxFlush.getChildren().addAll(labelFlush, this.textFieldFlush);
     return hBoxFlush;
   }
 
@@ -121,10 +127,9 @@ public class AppWindow extends Application {
    */
   public HBox hBoxHearts() {
     Label labelHearts = new Label("Hearts:");
-    TextField textFieldHearts = new TextField();
-    textFieldHearts.setEditable(false);
+    this.textFieldHearts.setEditable(false);
     HBox hBoxHearts = new HBox();
-    hBoxHearts.getChildren().addAll(labelHearts, textFieldHearts);
+    hBoxHearts.getChildren().addAll(labelHearts, this.textFieldHearts);
     return hBoxHearts;
   }
 
@@ -134,10 +139,9 @@ public class AppWindow extends Application {
    */
   public HBox hBoxQueensOfSpades() {
     Label labelQueensOfSpades = new Label("Queens of spades:");
-    TextField textFieldQueensOfSpades = new TextField();
-    textFieldQueensOfSpades.setEditable(false);
+    this.textFieldQueensOfSpades.setEditable(false);
     HBox hBoxQueensOfSpades = new HBox();
-    hBoxQueensOfSpades.getChildren().addAll(labelQueensOfSpades, textFieldQueensOfSpades);
+    hBoxQueensOfSpades.getChildren().addAll(labelQueensOfSpades, this.textFieldQueensOfSpades);
     return hBoxQueensOfSpades;
   }
 
@@ -173,27 +177,76 @@ public class AppWindow extends Application {
 
     Button dealHandButton = new Button("Deal hand");
     Button checkHandButton = new Button("Check hand");
+
+    //Eventhandler for the dealHandButton
     dealHandButton.setOnAction((ActionEvent event) -> {
         System.out.println("Deal hand button clicked");
-        List<String> handCards = new ArrayList<>();
+        this.cardsOnHand = new ArrayList<>();
         List<Image> handImage = new ArrayList<>();
-        Iterator<PlayingCard> it = deck.dealHand(5).iterator();
-
-        while(it.hasNext())
-        {
-          handCards.add(it.next().getAsString());
-        }
-        for(String card : handCards)
+      this.cardsOnHand.addAll(deck.dealHand(5));
+      for(PlayingCard card : this.cardsOnHand)
         {
           handImage.add(new Image(
-              String.valueOf(getClass().getResource(STR."cards/\{card}.png"))));
-          System.out.println(card);
+              String.valueOf(getClass().getResource(STR."cards/\{card.getAsString()}.png"))));
+          System.out.println(card.getAsString());
         }
         for (Image card : handImage) {
           System.out.println(card.getUrl());
-          ImageView imageView = new ImageView(card.getUrl());
-          cardPane().getChildren().add(imageView);
+          ImageView imageView = new ImageView(card);
+            imageView.setFitHeight(200);
+            imageView.setFitWidth(150);
+          flowPaneCardsOnHand.getChildren().add(imageView);
         }
+
+    });
+
+    //Eventhandler for the checkHandButton
+    checkHandButton.setOnAction((ActionEvent event) -> {
+      System.out.println("Check hand button clicked");
+      //Check the sum of the faces
+      List<Integer> faces = new ArrayList<>();
+      for (PlayingCard card : this.cardsOnHand) {
+        faces.add(card.getFace());
+        System.out.println(card.getFace());
+      }
+      Integer sum = 0;
+        for (Integer face : faces) {
+            sum += face;
+        }
+        textFieldSumOfFaces.setText(sum.toString());
+        System.out.println(sum);
+
+      //Check if there is flush
+      boolean flush = true;
+        char suit = this.cardsOnHand.getFirst().getSuit();
+        for (PlayingCard card : this.cardsOnHand) {
+          System.out.println(card.getSuit());
+            if (card.getSuit() != suit) {
+                flush = false;
+            }
+            textFieldFlush.setText(Boolean.toString(flush));
+        }
+        //Check if there are hearts
+        boolean hearts = false;
+        for (PlayingCard card : this.cardsOnHand) {
+            if (card.getSuit() == 'H') {
+                hearts = true;
+            }
+            textFieldHearts.setText(Boolean.toString(hearts));
+        }
+        //Check if there are queens of spades
+        boolean queensOfSpades = false;
+        for (PlayingCard card : this.cardsOnHand) {
+            if (card.getSuit() == 'S' && card.getFace() == 12) {
+                queensOfSpades = true;
+            }
+            textFieldQueensOfSpades.setText(Boolean.toString(queensOfSpades));
+        }
+
+
+
+
+
 
     });
 
@@ -201,25 +254,18 @@ public class AppWindow extends Application {
     buttons.add(checkHandButton, 0, 1);
     return buttons;
     }
-  //Deprecated and example of how to use an Eventhandler class
-  private class dealHandButtonHandler implements EventHandler<ActionEvent> {
-    @Override
-    public void handle(ActionEvent actionEvent) {
-      System.out.println("Deal hand button clicked");
-      DeckOfCards deck = new DeckOfCards();
-
-
-
-      }
-    }
   public FlowPane cardPane(){
-      FlowPane cardPane = new FlowPane();
-      cardPane.setPadding(new Insets(10, 10, 10, 10));
-      cardPane.setHgap(10);
-      cardPane.setVgap(10);
-      return cardPane;
+    FlowPane cardPane = this.flowPaneCardsOnHand;
+    cardPane.setAlignment(Pos.CENTER);
+    cardPane.setPadding(new Insets(10, 10, 10, 10));
+    cardPane.setHgap(10);
+    cardPane.setVgap(10);
+    cardPane.setStyle("-fx-background-color: DAE6F3;");
+    return cardPane;
+
+
   }
   public static void appMain(String[] args){
-    launch();
+    launch(args);
   }
 }
