@@ -5,8 +5,8 @@ package no.ntnu.idatx2003.oblig3.cardgame;
  * 1 and 13, where 1 is called an Ace, 11 = Knight, 12 = Queen and 13 = King.
  * The card can also be one of 4 suits: Spade, Heart, Diamonds and Clubs.
  *
- * @author ntnu
- * @version 2021-03-13
+ * @author Henrik Aamot
+ * @version 2024-03-20
  */
 public class PlayingCard {
 
@@ -66,25 +66,5 @@ public class PlayingCard {
    */
   public int getFace() {
     return face;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PlayingCard otherCard = (PlayingCard) o;
-    return getSuit() == otherCard.getSuit() && getFace() == otherCard.getFace();
-  }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 31 * hash + getSuit();
-    hash = 31 * hash + getFace();
-    return hash;
   }
 }
